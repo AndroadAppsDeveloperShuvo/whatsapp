@@ -1,99 +1,228 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
-  <title>WhatsApp Chat Launcher</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WhatsApp Direct Pro - By Shuvo</title>
+  
+  <!-- Toastify -->
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
+
   <style>
+    /* Professional Theme Variables */
+    :root {
+      --bg-color: #e2e8f0;
+      --card-bg: #ffffff;
+      --text-main: #000000;
+      --text-muted: #475569;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --border-color: #cbd5e1;
+      --input-bg: #f8fafc;
+      --success: #10b981;
+      --danger: #ef4444;
+      --whatsapp: #25D366;
+      --whatsapp-hover: #128C7E;
+      --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+    }
+
+    [data-theme="dark"] {
+      color-scheme: dark;
+      --bg-color: #020617;
+      --card-bg: #0f172a;
+      --text-main: #ffffff;
+      --text-muted: #94a3b8;
+      --primary: #3b82f6;
+      --primary-hover: #60a5fa;
+      --border-color: #334155;
+      --input-bg: #1e293b;
+      --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.6);
+    }
+
+    * {
+      box-sizing: border-box; margin: 0; padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      transition: background-color 0.3s, color 0.3s, border-color 0.2s;
+    }
+
     body {
-      background: #f0f2f5;
-      font-family: 'Roboto', sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
+      background: var(--bg-color); color: var(--text-main);
+      display: flex; justify-content: center; align-items: center;
+      min-height: 100vh; padding: 20px;
     }
-    .container {
-      background: #fff;
-      padding: 30px 40px;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-      text-align: center;
-      max-width: 400px;
-      width: 100%;
+
+    .generator-card {
+      background: var(--card-bg); width: 100%; max-width: 420px;
+      padding: 30px; border-radius: 20px; box-shadow: var(--shadow-lg);
+      position: relative;
     }
-    .container h2 {
-      margin-bottom: 20px;
-      color: #075e54;
+
+    /* Header & Settings */
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+    .header h1 { font-size: 22px; font-weight: 800; color: var(--text-main); }
+
+    .settings-btn { background: transparent; border: none; color: var(--text-main); cursor: pointer; padding: 8px; border-radius: 50%; }
+    .settings-btn:hover { background: var(--border-color); }
+    .settings-btn svg { width: 22px; height: 22px; fill: currentColor; }
+
+    .settings-dropdown {
+      position: absolute; top: 70px; right: 30px; background: var(--card-bg);
+      border: 2px solid var(--border-color); box-shadow: var(--shadow-lg);
+      border-radius: 12px; padding: 15px; width: 180px; display: none; z-index: 10;
     }
-    .container input {
-      width: 100%;
-      padding: 15px;
-      margin-bottom: 15px;
-      border: 2px solid #ddd;
-      border-radius: 8px;
-      font-size: 16px;
+    .settings-dropdown.active { display: block; animation: popIn 0.2s ease-out; }
+    .setting-item { display: flex; justify-content: space-between; align-items: center; font-size: 15px; font-weight: 700; }
+
+    /* Toggle Switch */
+    .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border-color); border-radius: 34px; transition: .4s; }
+    .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: .4s; }
+    input:checked + .slider { background-color: var(--primary); }
+    input:checked + .slider:before { transform: translateX(20px); }
+
+    /* Input Groups */
+    .input-group { margin-bottom: 18px; text-align: left; }
+    .input-group label { display: block; font-size: 14px; color: var(--text-main); margin-bottom: 8px; font-weight: 700; }
+    
+    input[type="text"], textarea {
+      width: 100%; padding: 14px; border: 2px solid var(--border-color);
+      background: var(--input-bg); color: var(--text-main); border-radius: 10px;
+      font-size: 15px; outline: none; font-weight: 600;
     }
-    .container button {
-      width: 100%;
-      padding: 15px;
-      background: #25D366;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background 0.3s ease;
+    textarea {
+      min-height: 100px;
+      resize: vertical;
     }
-    .container button:hover {
-      background: #128C7E;
+    input[type="text"]:focus, textarea:focus { border-color: var(--whatsapp); }
+
+    /* Buttons */
+    .btn {
+      width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 15px;
+      font-weight: 800; cursor: pointer; transition: 0.2s; color: #fff;
+      display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px;
     }
-    .error {
-      color: red;
-      font-size: 14px;
-      margin-top: -10px;
-      margin-bottom: 15px;
-    }
+    .btn:active { transform: scale(0.98); }
+    .btn-whatsapp { background: var(--whatsapp); }
+    .btn-whatsapp:hover { background: var(--whatsapp-hover); }
+
+    .btn svg { width: 20px; height: 20px; fill: currentColor; }
+
+    /* Footer */
+    .footer { margin-top: 25px; text-align: center; font-size: 14px; color: var(--text-muted); font-weight: 600; }
+    .footer span { color: var(--primary); font-weight: 800; }
+
+    @keyframes popIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <h2>Open WhatsApp Chat</h2>
-    <input type="text" id="phoneInput" placeholder="Enter full phone number with country code">
-    <div id="errorMsg" class="error"></div>
-    <button onclick="openWhatsApp()">Open in WhatsApp</button>
+  <div class="generator-card">
+    
+    <!-- Header -->
+    <div class="header">
+      <h1>WhatsApp Direct</h1>
+      <button class="settings-btn" id="settingsBtn" onclick="toggleSettings()" title="Settings">
+        <svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.06-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.73,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.06,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.43-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.49-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
+      </button>
+
+      <div class="settings-dropdown" id="settingsMenu">
+        <div class="setting-item">
+          <span>Dark Mode</span>
+          <label class="switch"><input type="checkbox" id="themeToggle" onchange="toggleTheme()"><span class="slider"></span></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Area -->
+    <div class="input-group">
+      <label for="phoneInput">Phone Number (with country code)</label>
+      <input type="text" id="phoneInput" placeholder="e.g. +88017XXXXXXXX" autocomplete="off">
+    </div>
+
+    <div class="input-group">
+      <label for="messageInput">Pre-filled Message (Optional)</label>
+      <textarea id="messageInput" placeholder="Hello! I want to know about..."></textarea>
+    </div>
+
+    <button onclick="openWhatsApp()" class="btn btn-whatsapp">
+      <svg viewBox="0 0 24 24"><path d="M12.031 21.053a9.924 9.924 0 0 1-5.064-1.385l-.362-.214-3.766.987 1.004-3.67-.235-.374a9.943 9.943 0 1 1 18.36-4.996c0 5.485-4.464 9.942-9.937 9.942zm0-18.174a8.236 8.236 0 0 0-8.23 8.23c0 1.637.426 3.235 1.233 4.646l.19.333-.596 2.181 2.234-.585.324.192a8.23 8.23 0 0 0 4.845 1.554c4.54 0 8.234-3.693 8.234-8.234a8.238 8.238 0 0 0-8.234-8.237zm4.523 11.233c-.247-.124-1.464-.723-1.692-.806-.228-.083-.395-.124-.56.124-.166.248-.64 .806-.784.97-.144.166-.288.186-.535.062-.247-.124-1.045-.385-1.99-1.23-.736-.658-1.23-1.47-1.375-1.718-.144-.248-.016-.381.108-.505.112-.112.247-.29.37-.434.124-.145.166-.248.247-.413.083-.166.042-.31-.02-.434-.062-.124-.56-1.353-.767-1.85-.2-.486-.404-.42-.56-.428l-.48-.008c-.166 0-.434.062-.66.31-.228.248-.868.847-.868 2.066s.89 2.396 1.014 2.562c.124.166 1.747 2.666 4.232 3.738 2.052.882 2.454.704 2.91.59.456-.112 1.464-.6 1.67-1.18.207-.58.207-1.076.145-1.18-.06-.104-.227-.166-.474-.29z"/></svg>
+      Open in WhatsApp
+    </button>
+
+    <!-- Footer -->
+    <div class="footer">Developed by <span>Developer Shuvo</span></div>
   </div>
 
   <script>
+    // Theme Setup
+    document.addEventListener("DOMContentLoaded", () => {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      if (savedTheme === 'dark') document.getElementById('themeToggle').checked = true;
+    });
+
+    function toggleSettings() {
+      document.getElementById('settingsMenu').classList.toggle('active');
+    }
+
+    document.addEventListener('click', function(event) {
+      const menu = document.getElementById('settingsMenu');
+      const btn = document.getElementById('settingsBtn');
+      if (!menu.contains(event.target) && !btn.contains(event.target)) {
+        menu.classList.remove('active');
+      }
+    });
+
+    function toggleTheme() {
+      const isDark = document.getElementById('themeToggle').checked;
+      const newTheme = isDark ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    }
+
     function openWhatsApp() {
-      var phoneInput = document.getElementById("phoneInput");
-      var phoneNumber = phoneInput.value.trim();
-      var errorMsg = document.getElementById("errorMsg");
+      let phoneNumber = document.getElementById("phoneInput").value.trim();
+      let message = document.getElementById("messageInput").value.trim();
 
       if (phoneNumber === "") {
-        errorMsg.textContent = "Please enter the phone number with country code";
+        showToast("Please enter a phone number!", "#ef4444");
         return;
       }
 
-      // Remove spaces
-      phoneNumber = phoneNumber.replace(/\s+/g, '');
+      // Smart Formatting: Remove spaces, dashes, and brackets automatically
+      phoneNumber = phoneNumber.replace(/[\s\-\(\)]/g, '');
 
       // Ensure it starts with "+" or digits
       if (!phoneNumber.startsWith("+") && !/^\d+$/.test(phoneNumber)) {
-        errorMsg.textContent = "Phone number must start with '+' and country code, e.g. +88017XXXXXXX";
+        showToast("Invalid format! Use country code (e.g. +88017...)", "#ef4444");
         return;
       }
 
-      errorMsg.textContent = "";
+      // Generate WhatsApp Direct Link
+      let url = "https://api.whatsapp.com/send?phone=" + encodeURIComponent(phoneNumber);
+      if (message !== "") {
+        url += "&text=" + encodeURIComponent(message);
+      }
 
-      var url = "https://api.whatsapp.com/send?phone=" + encodeURIComponent(phoneNumber);
       window.open(url, "_blank");
+      showToast("Opening WhatsApp...", "#10b981");
+    }
+
+    function showToast(message, color) {
+      Toastify({
+        text: message,
+        duration: 3000,
+        gravity: "top",
+        position: "center",
+        style: {
+          background: color,
+          borderRadius: "8px",
+          fontWeight: "bold"
+        }
+      }).showToast();
     }
   </script>
-
 </body>
 </html>
